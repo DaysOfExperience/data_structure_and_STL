@@ -121,6 +121,41 @@ public:
                 parent = cur;
                 cur = cur->_left;
             } else {
+                if(cur == _root)
+                {
+                    // 此时，要删除的是整棵树的根节点，此时的parent不是cur的父节点。
+                    if(_root->_left == nullptr) {
+                        Node *del = _root;
+                        _root = _root->_right;
+                        delete del;
+                        return true;
+                    }
+                    else if(_root->_right == nullptr) {
+                        Node *del = _root;
+                        _root = _root->_left;
+                        delete del;
+                        return true;
+                    }
+                    else {
+                        Node *min = _root->_right;
+                        Node *minP = _root;
+                        while(min->_left) {
+                            minP = min;
+                            min = min->_left;
+                        }
+                        std::swap(_root->_key, min->_key);
+                        // 此时需要删除min;
+//                        return Erase(key);  // 此时key已经不是根节点了。
+                        if(min == minP->_left) {
+                            minP->_left = min->_right;
+                        }
+                        else {
+                            minP->_right = min->_right;
+                        }
+                        delete min;
+                        return true;
+                    }
+                }
                 // 找到要删除的结点的，也就是cur，其父节点是parent（除了要删除root时，此时cur == parent）
                 // edition 2
                 // situation 1 - 情况1

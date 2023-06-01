@@ -103,8 +103,22 @@ void test5()
     bst.Erase_R(3);
     bst.InOrder();
 }
+
+void test6()
+{
+    BinarySearchTree<int> bst;
+    bst.Insert(1);
+    bst.Insert(2);
+    bst.Insert(3);
+    bst.Insert(4);
+    bst.Insert(5);
+    bst.Insert(6);
+    bst.InOrder();
+    bst.Erase(1);
+    bst.InOrder();
+}
 int main()
 {
-    test5();
+    test6();
     return 0;
 }
