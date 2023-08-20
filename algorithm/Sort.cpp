@@ -475,99 +475,161 @@ void QuickSortNoRecursionQueue(int* arr, int begin, int end) {
 //        }
 //    }
 //}
-void _MergeSort(int* arr, int begin, int end, int* tmp) { // [begin, end]
-    if(begin >= end) { // 保证至少有两个元素，才需要排序。一个即为有序。
-        return;
-    }
-    int mid = (begin+end)/2;
-    // 这里的操作是将左右子区间变为有序。
-    // [begin, mid] [mid+1, end] 分治递归，让子区间有序。
-    _MergeSort(arr, begin, mid, tmp);
-    _MergeSort(arr, mid+1, end, tmp);
-    // 归并，arr中左右子区间有序了，归并到tmp中对应位置，再拷贝回来。
-    int begin1 = begin, end1 = mid;
-    int begin2 = mid+1, end2 = end;
+
+// 23820
+void _MergeSort(int *arr, int begin, int end, int *tmp) { // [begin, end]
+    // 二叉树后序遍历思想：先让左右区间有序，再二路归并O(N)
+    int mid = ((end - begin) >> 1) + begin;   // 若mid == begin，则此时只有两个元素了，此时无需再次递归，直接进行两个元素的归并操作即可
+    if(begin < mid)   _MergeSort(arr, begin, mid, tmp);    // [begin, mid]
+    if(mid + 1 < end)   _MergeSort(arr, mid + 1, end, tmp);     // [mid + 1, end]
+    // 此时左右区间都有序了：[begin, mid] [mid + 1, end]，下面进行O(N)的归并
     int index = begin;
+    int begin1 = begin, end1 = mid;
+    int begin2 = mid + 1, end2 = end;
     while(begin1 <= end1 && begin2 <= end2) {
         if(arr[begin1] < arr[begin2]) {
             tmp[index++] = arr[begin1++];
-        }else {
+        } else {
             tmp[index++] = arr[begin2++];
         }
     }
-    while(begin1 <= end1) {
-        tmp[index++] = arr[begin1++];
-    }
-    while(begin2 <= end2) {
-        tmp[index++] = arr[begin2++];
-    }
-    // 此时，左右子区间合并到了tmp的对应位置上。再拷贝回arr即可
-    memcpy(arr+begin, tmp+begin, (end-begin+1)*sizeof(int));
+    while(begin1 <= end1) tmp[index++] = arr[begin1++];
+    while(begin2 <= end2) tmp[index++] = arr[begin2++];
+    memcpy(arr + begin, tmp + begin, (end - begin + 1) * sizeof(int));
+}
+void MergeSort(int *arr, int n) {
+    int *tmp = new int[n];
+    _MergeSort(arr, 0, n - 1, tmp);
+    delete []tmp;
 }
 
-void MergeSort(int* arr, int n) {
-    int* tmp = (int*)malloc(n*sizeof(int));
-    if(tmp == nullptr) {
-        cout<<"MergeSort::malloc fail"<<endl;
-        exit(-1);
-    }
-    _MergeSort(arr, 0, n-1, tmp);
-    free(tmp);
-}
-
+//void _MergeSort(int* arr, int begin, int end, int* tmp) { // [begin, end]
+//    if(begin >= end) { // 保证至少有两个元素，才需要排序。一个即为有序。
+//        return;
+//    }
+//    int mid = (begin+end)/2;
+//    // 这里的操作是将左右子区间变为有序。
+//    // [begin, mid] [mid+1, end] 分治递归，让子区间有序。
+//    _MergeSort(arr, begin, mid, tmp);
+//    _MergeSort(arr, mid+1, end, tmp);
+//    // 归并，arr中左右子区间有序了，归并到tmp中对应位置，再拷贝回来。
+//    int begin1 = begin, end1 = mid;
+//    int begin2 = mid+1, end2 = end;
+//    int index = begin;
+//    while(begin1 <= end1 && begin2 <= end2) {
+//        if(arr[begin1] < arr[begin2]) {
+//            tmp[index++] = arr[begin1++];
+//        }else {
+//            tmp[index++] = arr[begin2++];
+//        }
+//    }
+//    while(begin1 <= end1) {
+//        tmp[index++] = arr[begin1++];
+//    }
+//    while(begin2 <= end2) {
+//        tmp[index++] = arr[begin2++];
+//    }
+//    // 此时，左右子区间合并到了tmp的对应位置上。再拷贝回arr即可
+//    memcpy(arr+begin, tmp+begin, (end-begin+1)*sizeof(int));
+//}
+//
+//void MergeSort(int* arr, int n) {
+//    int* tmp = (int*)malloc(n*sizeof(int));
+//    if(tmp == nullptr) {
+//        cout<<"MergeSort::malloc fail"<<endl;
+//        exit(-1);
+//    }
+//    _MergeSort(arr, 0, n-1, tmp);
+//    free(tmp);
+//}
 void MergeSortNoRecursion(int* arr, int n) {
-    int* tmp = (int*)malloc(n*sizeof(int));
-    if(tmp == nullptr) {
-        cout<<"MergeSortNoRecursion::malloc fail"<<endl;
-        exit(-1);
-    }
-    int gap = 1;
+    int *tmp = new int[n];
+    int gap = 1;  // 起初11归并
     while(gap < n) {
-        for(int i = 0; i < n; i += 2 * gap) {  // 2*gap是一组排完序的个数，到下一组了。
-            // [i, i+gap-1] [i+gap, i+2*gap-1]  对这两个范围内的数据进行排序。
-            // begin1=i不可能越界，只有end1，begin2，end2可能越界。
+        for (int i = 0; i < n; i += gap * 2) {
+            // [i, i+gap-1] [i+gap, i+2*gap-1]  这两个区间进行O(N)的二路归并
             int begin1 = i, end1 = i + gap - 1;
             int begin2 = i + gap, end2 = i + 2 * gap - 1;
-
-            //越界检查，修改后其实还是基于下面的归并逻辑以及memcpy的位置。
-            if(end1 >= n) {
+            // 此时，end1 begin2 end2可能越界，最简单的比如n = 10 最终88归并：0 7 8 15此时end2越界
+            if(end1 >= n) {  // end1越界，不需要二路归并，直接将[begin1, n-1]拷贝回去即可，
                 end1 = n - 1;
+                // 右区域数组改为不存在的范围，从而下面的归并逻辑就只会把[begin1, end1]拷贝到tmp的对应位置中
+                begin2 = 2;
+                end2 = 1;   // 破坏begin2 <= end2的条件
+            }else if(begin2 >= n) {  // begin2越界(说明end1就是n-1)，此时依旧不需要二路归并，且[begin1, end1]本来就是有序的
                 // 右区域数组改为不存在的范围，从而下面的逻辑就只会把[begin1, end1]拷贝到tmp中
-                begin2 = n;
-                end2 = n-1;
-            }else if(begin2 >= n) {
-                // 右区域数组越界，只需要把[begin1, end1]拷贝到tmp中即可。
-                begin2 = n;
-                end2 = n-1;
-            }else if(end2 >= n) {
-                // 这种情况，比如一共10个元素，此时gap为8，则表示这是最后一次归并
-                // 那么只有end2越界，此时需要归并，只是一个不对称的归并而已
-                end2 = n-1;
+                begin2 = 2;
+                end2 = 1;
+            }else if(end2 >= n) {  // end2越界，需要二路归并，只是不是相等数量的二路归并罢了，比如43  86
+                end2 = n - 1;
             }
-
-            // 对[i, i+gap-1] [i+gap, i+2*gap-1]范围内进行归并
-            int index = begin1;
+            int index = i;
             while (begin1 <= end1 && begin2 <= end2) {
-                if (arr[begin1] < arr[begin2]) {
-                    tmp[index++] = arr[begin1++];
-                } else {
-                    tmp[index++] = arr[begin2++];
-                }
+                if (arr[begin1] < arr[begin2]) tmp[index++] = arr[begin1++];
+                else tmp[index++] = arr[begin2++];
             }
-            while(begin1 <= end1) {
-                tmp[index++] = arr[begin1++];
-            }
-            while(begin2 <= end2) {
-                tmp[index++] = arr[begin2++];
-            }
+            while (begin1 <= end1) tmp[index++] = arr[begin1++];
+            while (begin2 <= end2) tmp[index++] = arr[begin2++];
+            // [i, i+gap-1] [i+gap, i+2*gap-1]两个区间的二路归并完毕
         }
-        // 全部归并完，再全部拷贝回去。
-        memcpy(arr, tmp, n*sizeof(int));
+        // gapgap归并完毕（11，22，44）
+        memcpy(arr, tmp, n * sizeof(int));
         gap *= 2;
     }
-    free(tmp);
+    delete[] tmp;
 }
-
+// old
+//void MergeSortNoRecursion(int* arr, int n) {
+//    int* tmp = (int*)malloc(n*sizeof(int));
+//    if(tmp == nullptr) {
+//        cout<<"MergeSortNoRecursion::malloc fail"<<endl;
+//        exit(-1);
+//    }
+//    int gap = 1;
+//    while(gap < n) {
+//        for(int i = 0; i < n; i += 2 * gap) {  // 2*gap是一组排完序的个数，到下一组了。比如11归并，则两个元素嘛
+//            // [i, i+gap-1] [i+gap, i+2*gap-1]  对这两个范围内的数据进行排序。
+//            // begin1=i不可能越界，只有end1，begin2，end2可能越界。
+//            int begin1 = i, end1 = i + gap - 1;
+//            int begin2 = i + gap, end2 = i + 2 * gap - 1;
+//            //越界检查，修改后其实还是基于下面的归并逻辑以及memcpy的位置。
+//            if(end1 >= n) {
+//                end1 = n - 1;
+//                // 右区域数组改为不存在的范围，从而下面的逻辑就只会把[begin1, end1]拷贝到tmp中
+//                begin2 = n;
+//                end2 = n-1;
+//            }else if(begin2 >= n) {
+//                // 右区域数组越界，只需要把[begin1, end1]拷贝到tmp中即可。
+//                begin2 = n;
+//                end2 = n-1;
+//            }else if(end2 >= n) {
+//                // 这种情况，比如一共10个元素，此时gap为8，则表示这是最后一次归并
+//                // 那么只有end2越界，此时需要归并，只是一个不对称的归并而已
+//                end2 = n-1;
+//            }
+//            // 对[i, i+gap-1] [i+gap, i+2*gap-1]范围内进行归并
+//            int index = begin1;
+//            while (begin1 <= end1 && begin2 <= end2) {
+//                if (arr[begin1] < arr[begin2]) {
+//                    tmp[index++] = arr[begin1++];
+//                } else {
+//                    tmp[index++] = arr[begin2++];
+//                }
+//            }
+//            while(begin1 <= end1) {
+//                tmp[index++] = arr[begin1++];
+//            }
+//            while(begin2 <= end2) {
+//                tmp[index++] = arr[begin2++];
+//            }
+//        }
+//        // 全部归并完，再全部拷贝回去。
+//        memcpy(arr, tmp, n*sizeof(int));
+//        gap *= 2;
+//    }
+//    free(tmp);
+//}
+//
 void MergeSortNoRecursion2(int* arr, int n) {
     int* tmp = (int*)malloc(n*sizeof(int));
     if(tmp == nullptr) {
@@ -615,33 +677,49 @@ void MergeSortNoRecursion2(int* arr, int n) {
     }
     free(tmp);
 }
-
-// 时间复杂度：O(Max(Range, N))
-// 空间复杂度：O(Range);
-void CountSort(int* arr, int n) {
-    int min = arr[0];
-    int max = arr[0];
+void CountSort(int *arr, int n) {
+    int min = arr[0], max = arr[0];
     for(int i = 0; i < n; ++i) {
-        if(arr[i] < min) {
-            min = arr[i];
-        }
-        if(arr[i] > max) {
-            max = arr[i];
-        }
+        if(arr[i] < min) min = arr[i];
+        if(arr[i] > max) max = arr[i];
     }
-    int num = max - min + 1;
-    int* count = (int*)malloc(sizeof(int) * num);
-
-    for(int i = 0; i < num; ++i) {
-        count[i] = 0;
-    }
-    for(int i = 0; i < n; ++i) {
-        count[arr[i]-min]++;
-    }
+    int range = max - min + 1;
+    int *count = new int[range];
+    for(int i = 0; i < range; ++i)  count[i] = 0;
+    for(int i = 0; i < n; ++i)  count[arr[i] - min]++;
     int index = 0;
-    for(int i = 0; i < num; ++i) {
-        while(count[i]--) {
-            arr[index++] = i+min;  // !!!!
+    for(int i = 0; i < range; ++i) {
+        while(count[i]-- != 0) {
+            arr[index++] = i + min;
         }
     }
 }
+// 时间复杂度：O(Max(Range, N))
+// 空间复杂度：O(Range);
+//void CountSort(int* arr, int n) {
+//    int min = arr[0];
+//    int max = arr[0];
+//    for(int i = 0; i < n; ++i) {
+//        if(arr[i] < min) {
+//            min = arr[i];
+//        }
+//        if(arr[i] > max) {
+//            max = arr[i];
+//        }
+//    }
+//    int num = max - min + 1;
+//    int* count = (int*)malloc(sizeof(int) * num);
+//
+//    for(int i = 0; i < num; ++i) {
+//        count[i] = 0;
+//    }
+//    for(int i = 0; i < n; ++i) {
+//        count[arr[i]-min]++;
+//    }
+//    int index = 0;
+//    for(int i = 0; i < num; ++i) {
+//        while(count[i]--) {
+//            arr[index++] = i+min;  // !!!!
+//        }
+//    }
+//}

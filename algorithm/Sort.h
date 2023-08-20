@@ -23,7 +23,7 @@ void SelectSort(int* p, int n);
 // 冒泡排序
 void BubbleSort(int* p, int n);
 // 快速排序
-void QuickSort(int* p, int n1, int n2);
+void QuickSortHoare(int* p, int begin, int end);
 // 快速排序非递归栈实现
 void QuickSortNoRecursionStack(int* p, int n1, int n2);  // NoRecursion
 // 快速排序非递归队列实现

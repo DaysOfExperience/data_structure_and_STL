@@ -31,19 +31,12 @@ void testBubbleSort() {
     PrintArray(arr, sz);
 }
 
-void testQuickSort1() {
-    int arr[] = {4,2,5,6,1,7,8,3};
-    int sz = sizeof(arr)/sizeof (arr[0]);
-    PrintArray(arr, sz);
-//    QuickSort(arr,sz);
-    PrintArray(arr, sz);
-}
 void testQuickSort() {
 //    int arr[] = {4,2,5,6,1,7,8,3};
     int arr[] = {6,1,2,7,9,3,4,5,10,8};
     int sz = sizeof(arr)/sizeof (arr[0]);
     PrintArray(arr, sz);
-//    QuickSort(arr,0,sz-1);
+    QuickSortHoare(arr, 0, sz-1);
     PrintArray(arr, sz);
 }
 void testQuickSortNoRecursionStack() {
@@ -72,7 +65,7 @@ void testMergeSort() {
 }
 void testMergeSortNoRecursion() {
 //    int arr[] = {4,2,5,6,1,7,8,3};
-    int arr[] = {10,6,7,1,3,9,4,2};
+    int arr[] = {10,6,7,1,3,9,4};
     int sz = sizeof(arr)/sizeof (arr[0]);
     PrintArray(arr, sz);
     MergeSortNoRecursion(arr,sz);
@@ -86,8 +79,9 @@ void testCountSort() {
     PrintArray(arr, sz);
 }
 void testSortTime() {
+// 针对此情况，计数是最棒的，其次归并，其次是快排和希尔
     srand(time(nullptr));
-    const int N = 1000000;
+    const int N = 10000000;
     int* a1 = (int*)malloc(sizeof(int)*N);
     int* a2 = (int*)malloc(sizeof(int)*N);
     int* a3 = (int*)malloc(sizeof(int)*N);
@@ -105,33 +99,38 @@ void testSortTime() {
     }
 
     int begin1 = clock();
-//    InsertSort(a1, N); // ²åÈëÅÅÐò
+//    InsertSort(a1, N);   // 太慢了  N^2
     int end1 = clock();
-
+std::cout << "11" << std::endl;
     int begin2 = clock();
-//    ShellSort(a2, N);  // Ï£¶ûÅÅÐò
+    ShellSort(a2, N);
     int end2 = clock();
+    std::cout << "11" << std::endl;
 
     int begin3 = clock();
-//    SelectSort(a3, N);  // Ñ¡ÔñÅÅÐò£¬À­¿ç
+//    SelectSort(a3, N);    // 太慢了 N^2
     int end3 = clock();
+    std::cout << "11" << std::endl;
 
     int begin4 = clock();
-//    HeapSort(a4, N);         // ¶ÑÅÅ
+    CountSort(a4, N);
     int end4 = clock();
+    std::cout << "11" << std::endl;
 
     int begin5 = clock();
-//    QuickSort(a5, 0, N-1);  // ¿ìÅÅ
+    QuickSortHoare(a5, 0, N-1);
     int end5 = clock();
+    std::cout << "11" << std::endl;
 
     int begin6 = clock();
-//    MergeSort(a6, N);       // ¹é²¢
+    MergeSort(a6, N);
     int end6 = clock();
+    std::cout << "11" << std::endl;
 
     printf("InsertSort:%d\n", end1 - begin1);
     printf("ShellSort:%d\n", end2 - begin2);
     printf("SelectSort:%d\n", end3 - begin3);
-    printf("HeapSort:%d\n", end4 - begin4);
+    printf("CountSort:%d\n", end4 - begin4);
     printf("QuickSort:%d\n", end5 - begin5);
     printf("MergeSort:%d\n", end6 - begin6);
     free(a1);
@@ -150,11 +149,11 @@ int main()
 //    testBubbleSort();
 //    testQuickSort();
 //    testQuickSortNoRecursionStack();
-    testQuickSortNoRecursionQueue();
+//    testQuickSortNoRecursionQueue();
 //    testMergeSort();
 //    testMergeSortNoRecursion();
 //    testCountSort();
 
-//    testSortTime();
+    testSortTime();
     return 0;
 }
