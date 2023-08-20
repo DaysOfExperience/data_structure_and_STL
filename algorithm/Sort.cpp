@@ -215,9 +215,25 @@ void BubbleSort(int* arr, int n) {
 //        }
 //    }
 //}
-
+// 我们选择的枢纽是begin位置，所以下方函数使得begin，mid，end三处最终begin为中间值
+void optimize(int *arr, int begin, int end) {
+    int mid = ((end - begin) >> 1) + begin;
+    if(arr[mid] > arr[end]) {
+        std::swap(arr[mid], arr[end]);
+    }
+    if(arr[begin] < arr[mid]) {
+        std::swap(arr[begin], arr[mid]);
+    }
+    if(arr[begin] > arr[end]) {
+        std::swap(arr[begin], arr[end]);
+    }
+}
 //  Hoare 版本
 void QuickSortHoare(int* arr, int begin, int end) {  // [begin, end]
+    if(end - begin <= 12) {
+        return InsertSort(arr + begin, end - begin + 1);
+    }
+    optimize(arr, begin, end);   // 调用之后begin下标处的值为中间值，优化
     int left = begin;
     int right = end;
     int keyIndex = begin;  // 设置下标是因为后面要交换数据
@@ -311,16 +327,17 @@ void QuickSortPtr(int* arr, int begin, int end) {  // [begin, end]
         swap(arr[keyIndex], arr[prev]);
         // 此时prev就是那个分割线，并且这是一种前闭后开的形式
         if (prev - 1 > begin) {
-            QuickSort(arr, begin, prev-1);
+            QuickSortPtr(arr, begin, prev-1);
         }
         if (prev + 1 < end) {
-            QuickSort(arr, prev + 1, end);
+            QuickSortPtr(arr, prev + 1, end);
         }
     }else {
         InsertSort(arr+begin, end-begin+1);
     }
 }
 
+// 23820
 // 快排改非递归用循环很难，可以在堆上创建数据结构：栈 来模拟递归过程。(因为堆很大
 void QuickSortNoRecursionStack(int* arr, int begin, int end)  // recursion  [begin, end]
 {
@@ -328,70 +345,136 @@ void QuickSortNoRecursionStack(int* arr, int begin, int end)  // recursion  [beg
     st.push(end);
     st.push(begin);
     while(!st.empty()) {
-        int left = st.top();
+        int bg = st.top(), left = bg;
         st.pop();
-        int right = st.top();
+        int ed = st.top(), right = ed;
         st.pop();
-        // 这里就是一个全新的范围，进行单趟排序即可。
-        int prev = left;
-        int cur = left+1;
-        int mid = GetMiddleIndex(arr,left,right);
-        swap(arr[left], arr[mid]);
+        optimize(arr, left, right);
         int keyIndex = left;
-        while(cur <= right) {
-            if(arr[cur] < arr[keyIndex] && ++prev != cur) {
-                swap(arr[prev], arr[cur]);
+        while(left < right) {
+            while(left < right && arr[right] >= arr[keyIndex]) {
+                --right;
             }
-            cur++;
+            while(left < right && arr[left] <= arr[keyIndex]) {
+                ++left;
+            }
+            std::swap(arr[left], arr[right]);
         }
-        swap(arr[keyIndex], arr[prev]);
-        // 单趟排序结束
-        // [begin, prev-1] prev [prev+1, end]
-        if(prev+1 < right) {
-            st.push(right);
-            st.push(prev+1);
+        std::swap(arr[left], arr[keyIndex]);
+        // 单趟排序结束，接下来处理左右子区间，先压右，再压左，先取左，后取右。
+        if(left + 1 < ed) {  // [left + 1, ed]
+            st.push(ed);
+            st.push(left + 1);
         }
-        if(prev-1 > left) {
-            st.push(prev-1);
-            st.push(left);
+        if(left - 1 > bg) {    // [bg, left - 1]
+            st.push(left - 1);
+            st.push(bg);
         }
     }
 }
 
 void QuickSortNoRecursionQueue(int* arr, int begin, int end) {
-    queue<int> q;
-    q.push(begin);
-    q.push(end);
-    while(!q.empty()) {
-        int left = q.front();
-        q.pop();
-        int right = q.front();
-        q.pop();
-        int prev = left;
-        int cur = left+1;
-        int mid = GetMiddleIndex(arr,left,right);
-        swap(arr[left], arr[mid]);
+    queue<int> que;
+    que.push(begin);
+    que.push(end);
+    while(!que.empty()) {
+        int bg = que.front(), left = bg;
+        que.pop();
+        int ed = que.front(), right = ed;
+        que.pop();
+        optimize(arr, left, right);
         int keyIndex = left;
-        while(cur <= right) {
-            if(arr[cur] < arr[keyIndex] && ++prev != cur) {
-                swap(arr[prev], arr[cur]);
+        while(left < right) {
+            while(left < right && arr[right] >= arr[keyIndex]) {
+                --right;
             }
-            ++cur;
+            while(left < right && arr[left] <= arr[keyIndex]) {
+                ++left;
+            }
+            std::swap(arr[left], arr[right]);
         }
-        swap(arr[keyIndex], arr[prev]);
-        // 单趟完成
-        // [left, prev-1] prev [prev+1, right]
-        if(prev-1 > left) {
-            q.push(left);
-            q.push(prev-1);
+        std::swap(arr[left], arr[keyIndex]);
+        // 单趟排序结束，接下来处理左右子区间
+        if(left - 1 > bg) {    // [bg, left - 1]
+            que.push(bg);
+            que.push(left - 1);
         }
-        if(prev+1 < right) {
-            q.push(prev+1);
-            q.push(right);
+        if(left + 1 < ed) {  // [left + 1, ed]
+            que.push(left + 1);
+            que.push(ed);
         }
     }
 }
-
+// old
+// 快排改非递归用循环很难，可以在堆上创建数据结构：栈 来模拟递归过程。(因为堆很大
+//void QuickSortNoRecursionStack(int* arr, int begin, int end)  // recursion  [begin, end]
+//{
+//    stack<int> st;
+//    st.push(end);
+//    st.push(begin);
+//    while(!st.empty()) {
+//        int left = st.top();
+//        st.pop();
+//        int right = st.top();
+//        st.pop();
+//        // 这里就是一个全新的范围，进行单趟排序即可。
+//        int prev = left;
+//        int cur = left+1;
+//        int mid = GetMiddleIndex(arr,left,right);
+//        swap(arr[left], arr[mid]);
+//        int keyIndex = left;
+//        while(cur <= right) {
+//            if(arr[cur] < arr[keyIndex] && ++prev != cur) {
+//                swap(arr[prev], arr[cur]);
+//            }
+//            cur++;
+//        }
+//        swap(arr[keyIndex], arr[prev]);
+//        // 单趟排序结束
+//        // [begin, prev-1] prev [prev+1, end]
+//        if(prev+1 < right) {
+//            st.push(right);
+//            st.push(prev+1);
+//        }
+//        if(prev-1 > left) {
+//            st.push(prev-1);
+//            st.push(left);
+//        }
+//    }
+//}
+//void QuickSortNoRecursionQueue(int* arr, int begin, int end) {
+//    queue<int> q;
+//    q.push(begin);
+//    q.push(end);
+//    while(!q.empty()) {
+//        int left = q.front();
+//        q.pop();
+//        int right = q.front();
+//        q.pop();
+//        int prev = left;
+//        int cur = left+1;
+//        int mid = GetMiddleIndex(arr,left,right);
+//        swap(arr[left], arr[mid]);
+//        int keyIndex = left;
+//        while(cur <= right) {
+//            if(arr[cur] < arr[keyIndex] && ++prev != cur) {
+//                swap(arr[prev], arr[cur]);
+//            }
+//            ++cur;
+//        }
+//        swap(arr[keyIndex], arr[prev]);
+//        // 单趟完成
+//        // [left, prev-1] prev [prev+1, right]
+//        if(prev-1 > left) {
+//            q.push(left);
+//            q.push(prev-1);
+//        }
+//        if(prev+1 < right) {
+//            q.push(prev+1);
+//            q.push(right);
+//        }
+//    }
+//}
 void _MergeSort(int* arr, int begin, int end, int* tmp) { // [begin, end]
     if(begin >= end) { // 保证至少有两个元素，才需要排序。一个即为有序。
         return;

@@ -43,7 +43,7 @@ void testQuickSort() {
     int arr[] = {6,1,2,7,9,3,4,5,10,8};
     int sz = sizeof(arr)/sizeof (arr[0]);
     PrintArray(arr, sz);
-    QuickSort(arr,0,sz-1);
+//    QuickSort(arr,0,sz-1);
     PrintArray(arr, sz);
 }
 void testQuickSortNoRecursionStack() {
@@ -121,7 +121,7 @@ void testSortTime() {
     int end4 = clock();
 
     int begin5 = clock();
-    QuickSort(a5, 0, N-1);  // ¿ìÅÅ
+//    QuickSort(a5, 0, N-1);  // ¿ìÅÅ
     int end5 = clock();
 
     int begin6 = clock();
@@ -148,9 +148,9 @@ int main()
 //    testShellSort();
 //    testSelectSort();
 //    testBubbleSort();
-    testQuickSort();
+//    testQuickSort();
 //    testQuickSortNoRecursionStack();
-//    testQuickSortNoRecursionQueue();
+    testQuickSortNoRecursionQueue();
 //    testMergeSort();
 //    testMergeSortNoRecursion();
 //    testCountSort();
