@@ -54,7 +54,7 @@ public:
                 cur = cur->_left;
             }
             else {
-                // Òª²åÈëµÄ¼üÖµÒÑ´æÔÚ
+                // è¦æ’å…¥çš„é”®å€¼å·²å­˜åœ¨
                 return false;
             }
         }
@@ -67,9 +67,8 @@ public:
             parent->_left = cur;
         }
         cur->_parent = parent;
-
-        // ²åÈëÐÂ½áµã³É¹¦£¬ÇÒÎªºìÉ«¡£½øÐÐÅÐ¶Ï
-        // ½øÈëÏÂ·½Ñ­»·ºó£¬parentÒ»¶¨Îªºì£¬ÔòparentÒ»¶¨²»ÊÇ¸ù½Úµã£¬ÔòparentÒ»¶¨ÓÐ¸¸Ç×£¬ÓÐÃ»ÓÐÐÖµÜ²»Ò»¶¨¡£
+        // æ’å…¥æ–°ç»“ç‚¹æˆåŠŸï¼Œä¸”ä¸ºçº¢è‰²ã€‚è¿›è¡Œåˆ¤æ–­
+        // è¿›å…¥ä¸‹æ–¹å¾ªçŽ¯åŽï¼Œparentä¸€å®šä¸ºçº¢ï¼Œåˆ™parentä¸€å®šä¸æ˜¯æ ¹èŠ‚ç‚¹ï¼Œåˆ™parentä¸€å®šæœ‰çˆ¶äº²ï¼Œæœ‰æ²¡æœ‰å…„å¼Ÿä¸ä¸€å®šã€‚
         while(parent && parent->_col == RED) {
             Node* grandfather = parent->_parent;
             Node* uncle = nullptr;
@@ -78,9 +77,9 @@ public:
             else
                 uncle = grandfather->_left;
 
-            // ÅÐ¶ÏÊåÊåµÄÇé¿ö£¬¾ö¶¨´¦Àí·½Ê½
+            // åˆ¤æ–­å”å”çš„æƒ…å†µï¼Œå†³å®šå¤„ç†æ–¹å¼
             if(uncle && uncle->_col == RED) {
-                // ÊåÊå´æÔÚÇÒÎªºì
+                // å”å”å­˜åœ¨ä¸”ä¸ºçº¢
                 parent->_col = BLACK;
                 uncle->_col = BLACK;
 
@@ -89,30 +88,30 @@ public:
                 parent = cur->_parent;
             }
             else {
-                // ÊåÊå²»´æÔÚ»òÕßÊåÊå´æÔÚÇÒÎªºÚ
+                // å”å”ä¸å­˜åœ¨æˆ–è€…å”å”å­˜åœ¨ä¸”ä¸ºé»‘
                 if(parent == grandfather->_left && cur == parent->_left) {
-                    // ´ËÊ±£¬×ó×ó£¬ÓÒµ¥Ðý+±äÉ«
-                    // ÏÈ±äÉ«Ò²¿ÉÒÔ
+                    // æ­¤æ—¶ï¼Œå·¦å·¦ï¼Œå³å•æ—‹+å˜è‰²
+                    // å…ˆå˜è‰²ä¹Ÿå¯ä»¥
                     parent->_col = BLACK;
                     grandfather->_col = RED;
                     RotateR(grandfather);
                 }
                 else if(parent == grandfather->_right && cur == parent->_right) {
-                    // ÓÒÓÒ£¬×óµ¥Ðý
+                    // å³å³ï¼Œå·¦å•æ—‹
                     parent->_col = BLACK;
                     grandfather->_col = RED;
                     RotateL(grandfather);
                 }
                 else if(parent == grandfather->_right && cur == parent->_left) {
-                    // curÎªºì£¬parentÎªºì£¬grandfatherÎªºÚ¡£
-                    // ÓÒ×óË«Ðý¡£
+                    // curä¸ºçº¢ï¼Œparentä¸ºçº¢ï¼Œgrandfatherä¸ºé»‘ã€‚
+                    // å³å·¦åŒæ—‹ã€‚
 //                    RotateR(parent);
 //                    RotateL(grandfather);
-//                    // ¼Ç×¡ÕâÀïÊÇÉÏºÚ£¬ÏÂÃæÁ©ºì¼´¿É¡£
+//                    // è®°ä½è¿™é‡Œæ˜¯ä¸Šé»‘ï¼Œä¸‹é¢ä¿©çº¢å³å¯ã€‚
 //                    cur->_col = BLACK;
 //                    grandfather->_col = RED;
 
-                    // µÚ¶þÖÖÊµÏÖ·½·¨£¬¼´µ¥Ðýºó±äÎªË«Ðý¡£
+                    // ç¬¬äºŒç§å®žçŽ°æ–¹æ³•ï¼Œå³å•æ—‹åŽå˜ä¸ºåŒæ—‹ã€‚
                     RotateR(parent);
                     std::swap(cur, parent);
                     parent->_col = BLACK;
@@ -122,7 +121,7 @@ public:
                 else if(parent == grandfather->_left && cur == parent->_right) {
 //                    RotateL(parent);
 //                    RotateR(grandfather);
-//                    // ¼Ç×¡ÕâÀïÊÇÉÏºÚ£¬ÏÂÃæÁ©ºì¼´¿É¡£
+//                    // è®°ä½è¿™é‡Œæ˜¯ä¸Šé»‘ï¼Œä¸‹é¢ä¿©çº¢å³å¯ã€‚
 //                    cur->_col = BLACK;
 //                    grandfather->_col = RED;
                     RotateL(parent);
@@ -131,16 +130,14 @@ public:
                     grandfather->_col = RED;
                     RotateR(grandfather);
                 }
-
                 break;
             }
-            if(cur == _root) {
+            if(cur == _root) {  // é’ˆå¯¹å”å”å­˜åœ¨ä¸”ä¸ºçº¢æ—¶ï¼Œå˜è‰²ä¹‹åŽï¼Œå¾ªçŽ¯å¤„ç†å‰ï¼Œè‹¥æ­¤æ—¶çš„curæ˜¯æ ¹èŠ‚ç‚¹ï¼Œåˆ™éœ€è¦å˜ä¸€ä¸‹è‰²ï¼ˆparentä¸ºnullptrï¼‰
                 cur->_col = BLACK;
             }
         }
         return true;
     }
-
 
     void InOrder()
     {
@@ -148,23 +145,23 @@ public:
         cout << endl;
     }
 
-    // ¿´ÑÕÉ«»¹ÊÇ¿´¸ß¶È£¿
-    // ¿´ÑÕÉ«£¬ÒòÎª¸ß¶ÈÕýÈ·²»Ò»¶¨ÊÇºìºÚÊ÷
+    // çœ‹é¢œè‰²è¿˜æ˜¯çœ‹é«˜åº¦ï¼Ÿ
+    // çœ‹é¢œè‰²ï¼Œå› ä¸ºé«˜åº¦æ­£ç¡®ä¸ä¸€å®šæ˜¯çº¢é»‘æ ‘
     bool IsBalance()
     {
         if(_root == nullptr)
             return true;
         if(_root->_col == RED) {
-            cout << "¸ù½ÚµãÎªºìÉ«£¬´íÎó" << endl;
+            cout << "æ ¹èŠ‚ç‚¹ä¸ºçº¢è‰²ï¼Œé”™è¯¯" << endl;
             return false;
         }
-        int baseNum = 0;
         return PrevCheck(_root, 0, 0);
     }
 
 private:
     bool PrevCheck(Node* root, int baseNum, int blackNum)
     {
+        // è¯¥ç»“ç‚¹ä¸ºå¶å­ç»“ç‚¹çš„å­ç»“ç‚¹ï¼Œå³ç©ºç»“ç‚¹ã€‚
         if(root == nullptr)
         {
             if(baseNum == 0) {
@@ -172,17 +169,19 @@ private:
                 return true;
             }
             else if(blackNum != baseNum){
-                cout << "Ä³ÌõÂ·¾¶ºÚÉ«½áµãÊýÁ¿²»Í¬£¬´íÎó" << endl;
+                cout << "æŸæ¡è·¯å¾„é»‘è‰²ç»“ç‚¹æ•°é‡ä¸åŒï¼Œé”™è¯¯" << endl;
                 return false;
             }
             else
                 return true;
         }
+        // è¯¥èŠ‚ç‚¹ä¸æ˜¯ç©ºç»“ç‚¹ï¼Œæ˜¯çº¢é»‘æ ‘ä¸­çš„æŸä¸€ä¸ªç»“ç‚¹
         if(root->_col == BLACK)
-            blackNum++;
+            blackNum++;      // åŒ…å«rootç»“ç‚¹çš„è·¯çº¿ä¸­çš„é»‘è‰²ç»“ç‚¹ä¸ªæ•°å¢žåŠ ä¸€ä¸ª
         else {
-            if((nullptr != root->_left && root->_left->_col == RED) || (nullptr != root->_right && root->_right->_col == RED)) {
-                cout << "³öÏÖÁ¬ÐøºìÉ«½áµã£¬´íÎó" << endl;
+            if((root->_left != nullptr && root->_left->_col == RED)
+            || (root->_right != nullptr && root->_right->_col == RED)) {
+                cout << "å‡ºçŽ°è¿žç»­çº¢è‰²ç»“ç‚¹ï¼Œé”™è¯¯" << endl;
                 return false;
             }
         }
@@ -204,14 +203,14 @@ private:
     void RotateL(Node* parent)
     {
         Node* subR = parent->_right;
-        Node* subRL = subR->_left;  // ¿ÉÄÜÎª¿Õ
+        Node* subRL = subR->_left;  // å¯èƒ½ä¸ºç©º
 
         parent->_right = subRL;
         if(subRL)
             subRL->_parent = parent;
 
         subR->_left = parent;
-        Node* ppNode = parent->_parent;  // ÐÞ¸Äparent->parentÖ®Ç°£¬±£´æÔ­ÏÈparent->parent
+        Node* ppNode = parent->_parent;  // ä¿®æ”¹parent->parentä¹‹å‰ï¼Œä¿å­˜åŽŸå…ˆparent->parent
         parent->_parent = subR;
 
         if(parent == _root)
