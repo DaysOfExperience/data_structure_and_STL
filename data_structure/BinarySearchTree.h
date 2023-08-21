@@ -22,7 +22,7 @@ template <typename K>
 class BinarySearchTree {
     typedef BSTreeNode<K> Node;
 private:
-    Node* _root = nullptr;   // ³õÊ¼»¯ÁĞ±íÖĞ£¬_rootÄ¬ÈÏ³õÊ¼»¯Îªnullptr
+    Node* _root = nullptr;   // åˆå§‹åŒ–åˆ—è¡¨ä¸­ï¼Œ_rooté»˜è®¤åˆå§‹åŒ–ä¸ºnullptr
 public:
     ~BinarySearchTree()
     {
@@ -41,7 +41,7 @@ public:
 private:
     Node* _Copy(Node* root)
     {
-        // µİ¹é¿½±´¶ş²æËÑË÷Ê÷£¬ÏÈ¹¹Ôì¸ù½Úµã£¬È»ºó¹¹Ôì×ó×ÓÊ÷£¬¹¹ÔìÓÒ×ÓÊ÷¡£
+        // é€’å½’æ‹·è´äºŒå‰æœç´¢æ ‘ï¼Œå…ˆæ„é€ æ ¹èŠ‚ç‚¹ï¼Œç„¶åæ„é€ å·¦å­æ ‘ï¼Œæ„é€ å³å­æ ‘ã€‚
         if(root == nullptr)
             return nullptr;
         Node* newNode = new Node(root->_key);
@@ -51,7 +51,7 @@ private:
     }
     void _Destroy(Node* root)
     {
-        // µİ¹éÏú»Ù¶ş²æËÑË÷Ê÷£¬ÏÈÏú»Ù×ó£¬ÔÙÏú»ÙÓÒ£¬È»ºóÏú»Ù¸ù½Úµã¡£
+        // é€’å½’é”€æ¯äºŒå‰æœç´¢æ ‘ï¼Œå…ˆé”€æ¯å·¦ï¼Œå†é”€æ¯å³ï¼Œç„¶åé”€æ¯æ ¹èŠ‚ç‚¹ã€‚
         if(root == nullptr)
             return;
         _Destroy(root->_left);
@@ -59,201 +59,274 @@ private:
         delete root;
     }
 public:
-    // ·Çµİ¹é
+    // äºŒå‰æœç´¢æ ‘çš„éé€’å½’æ’å…¥
     bool Insert(const K& key) {
-        // ¿ÕÊ÷
-        if (_root == nullptr) {
+        // ç©ºæ ‘
+        if(_root == nullptr) {
             _root = new Node(key);
             return true;
         }
-        // ·Ç¿ÕÊ÷
+        // éç©ºæ ‘
         Node *cur = _root;
         Node *parent = nullptr;
-        while (cur) {
-            if (key > cur->_key) {
+        while(cur) {
+            if(key > cur->_key) {
                 parent = cur;
                 cur = cur->_right;
-            } else if (key < cur->_key) {
+            }
+            else if(key < cur->_key) {
                 parent = cur;
                 cur = cur->_left;
-            } else {
-                return false; // ÒÑ¾­´æÔÚÁË
+            }
+            else {
+                return false;  // è¦æ’å…¥çš„valå·²ç»å­˜åœ¨äº†
             }
         }
-        // ´ËÊ±£¬curÎª¿Õ£¬parent²»Îª¿Õ£¬¼´½«²åÈëµÄ½áµãÎªparentµÄ×ó½áµã»òÓÒ½áµã£¬ĞèÒª¿´keyºÍparentµÄ¼üÖµµÄ±È½Ï
-        if (key > parent->_key) {
-            parent->_right = new Node(key);
-        } else {
-            parent->_left = new Node(key);
-        }
+        // æ­¤æ—¶ï¼Œcurä¸ºç©ºï¼Œparentä¸ä¸ºç©ºï¼Œå³å°†æ’å…¥çš„ç»“ç‚¹ä¸ºparentçš„å·¦ç»“ç‚¹æˆ–å³ç»“ç‚¹ï¼Œéœ€è¦çœ‹keyå’Œparentçš„é”®å€¼çš„æ¯”è¾ƒ
+        if(key > parent->_key) parent->_right = new Node(key);
+        else parent->_left = new Node(key);
         return true;
     }
-    // ·Çµİ¹é²éÕÒ£¬·µ»Øbool´ú±íÓĞ»òÎŞ
-    bool Find(const K& key)
-    {
-        Node* cur = _root;
-        while(cur)
-        {
-            if(key > cur->_key)
-            {
-                cur = cur->_right;
-            }
-            else if(key < cur->_key)
-            {
-                cur = cur->_left;
-            }
-            else
-            {
+    // éé€’å½’æŸ¥æ‰¾ï¼Œè¿”å›å€¼boolä»£è¡¨æœ‰æˆ–æ— 
+    bool Find(const K& key) {
+        if(_root == nullptr)    return false;
+        Node *cur = _root;
+        while(cur) {
+            if(key == cur->_key)
                 return true;
-            }
+            else if(key > cur->_key)
+                cur = cur->_right;
+            else
+                cur = cur->_left;
         }
         return false;
     }
-    // ·Çµİ¹éÉ¾³ı
+    // éé€’å½’åˆ é™¤   23821
     bool Erase(const K& key) {
         Node *cur = _root;
-        Node *parent = _root;
-        while (cur) {
-            if (key > cur->_key) {
-                parent = cur;
-                cur = cur->_right;
-            } else if (key < cur->_key) {
-                parent = cur;
-                cur = cur->_left;
-            } else {
-                if(cur == _root)
-                {
-                    // ´ËÊ±£¬ÒªÉ¾³ıµÄÊÇÕû¿ÃÊ÷µÄ¸ù½Úµã£¬´ËÊ±µÄparent²»ÊÇcurµÄ¸¸½Úµã¡£
+        Node *parent = nullptr;
+        while(cur) {
+            if(cur->_key == key) {
+                if(cur == _root) {
+                    // è¦åˆ é™¤çš„æ˜¯æ ¹èŠ‚ç‚¹
                     if(_root->_left == nullptr) {
-                        Node *del = _root;
                         _root = _root->_right;
-                        delete del;
-                        return true;
-                    }
-                    else if(_root->_right == nullptr) {
-                        Node *del = _root;
+                        delete cur;
+                    }else if(_root->_right == nullptr) {
                         _root = _root->_left;
-                        delete del;
-                        return true;
-                    }
-                    else {
+                        delete cur;
+                    }else {
+                        // æ ¹èŠ‚ç‚¹å·¦å³éƒ½ä¸ä¸ºç©ºï¼Œä¾æ—§æ˜¯swapæ€æƒ³ï¼ˆè§ä¸‹æ–¹ï¼‰
                         Node *min = _root->_right;
-                        Node *minP = _root;
+                        Node *minParent = _root;
                         while(min->_left) {
-                            minP = min;
+                            minParent = min;
                             min = min->_left;
                         }
-                        std::swap(_root->_key, min->_key);
-                        // ´ËÊ±ĞèÒªÉ¾³ımin;
-//                        return Erase(key);  // ´ËÊ±keyÒÑ¾­²»ÊÇ¸ù½ÚµãÁË¡£
-                        if(min == minP->_left) {
-                            minP->_left = min->_right;
+                        // æ­¤æ—¶minçš„å·¦å­æ ‘ä¸ºç©ºï¼Œå³å­æ ‘ä¸ç¡®å®šã€‚ä¸”minParentå’Œminçš„å…³ç³»ä¸ç¡®å®š
+                        std::swap(min->_key, _root->_key);
+                        if(min == minParent->_right) {
+                            minParent->_right = min->_right;  // minParent == _root     // æ³¨æ„æ­¤å¤„ä¸èƒ½èµ‹å€¼ä¸ºnullptrï¼Œå› ä¸ºminçš„å³çš„æƒ…å†µä¸ç¡®å®šï¼ï¼ï¼
+                            delete min;
+                        }else {
+                            minParent->_left = min->_right; // min->_right å¯èƒ½ä¸ºç©ºï¼Œå¯èƒ½ä¸ä¸ºç©ºï¼Œæ— æ‰€è°“
+                            delete min;
                         }
-                        else {
-                            minP->_right = min->_right;
+                    }
+                } else {
+                    // è¦åˆ é™¤çš„ä¸æ˜¯æ ¹èŠ‚ç‚¹
+                    if(cur->_left == nullptr) {
+                        if(cur == parent->_left) {
+                            parent->_left = cur->_right;
+                        }else {
+                            parent->_right = cur->_right;
                         }
-                        delete min;
-                        return true;
+                        delete cur;   // !!!!!!!
+                    }else if(cur->_right == nullptr) {
+                        if(cur == parent->_left) {
+                            parent->_left = cur->_left;
+                        }else {
+                            parent->_right = cur->_left;
+                        }
+                        delete cur;   // !!!!!!!
+                    }else {
+                        // è¦åˆ é™¤çš„ç»“ç‚¹æœ‰çˆ¶èŠ‚ç‚¹ï¼Œä¸”å·¦å³å­æ ‘éƒ½ä¸ä¸ºç©º
+                        // æ‰¾åˆ°å³å­æ ‘çš„æœ€å°å€¼ï¼Œå’Œcurçš„valè¿›è¡Œswapï¼Œåˆ é™¤æœ€å°ç»“ç‚¹å³å¯
+                        Node *min = cur->_right;
+                        Node *minParent = cur;
+                        while(min->_left) {
+                            minParent = min;
+                            min = min->_left;
+                        }
+                        // æ­¤æ—¶minçš„å·¦å­æ ‘ä¸ºç©ºï¼Œå³å­æ ‘ä¸ç¡®å®šã€‚ä¸”minParentå’Œminçš„å…³ç³»ä¸ç¡®å®š
+                        std::swap(min->_key, cur->_key);
+                        if(min == minParent->_right) {
+//                            minParent->_right = nullptr;      // false!!!!!
+                            minParent->_right = min->_right;    // right!!!!!
+                            delete min;
+                        }else {
+                            minParent->_left = min->_right; // min->_right å¯èƒ½ä¸ºç©ºï¼Œå¯èƒ½ä¸ä¸ºç©ºï¼Œæ— æ‰€è°“
+                            delete min;
+                        }
                     }
-                }
-                // ÕÒµ½ÒªÉ¾³ıµÄ½áµãµÄ£¬Ò²¾ÍÊÇcur£¬Æä¸¸½ÚµãÊÇparent£¨³ıÁËÒªÉ¾³ırootÊ±£¬´ËÊ±cur == parent£©
-                // edition 2
-                // situation 1 - Çé¿ö1
-                if(cur->_left == nullptr)
-                {
-                    if(parent->_left == cur)
-                    {
-                        parent->_left = cur->_right;
-                        delete cur;
-                    }
-                    else
-                    {
-                        parent->_right = cur->_right;
-                        delete cur;
-                    }
-                }
-                else if(cur->_right == nullptr)
-                {
-                    if(parent->_left == cur)
-                    {
-                        parent->_left = cur->_left;
-                        delete cur;
-                    }
-                    else
-                    {
-                        parent->_right = cur->_left;
-                        delete cur;
-                    }
-                }
-                else
-                {
-                    // ÒªÉ¾³ı½áµãµÄ×óÓÒ¾ù²»Îª¿Õ
-                    // È¥É¾³ı½áµãµÄÓÒ×ÓÊ÷ÖĞÕÒ×îĞ¡Öµ£¬Ìæ»»·¨É¾³ı
-                    Node* min = cur->_right;  // ÕâÀïÒ»¶¨²»Îªnullptr
-                    Node* minParent = cur;
-                    while(min->_left)
-                    {
-                        minParent = min;
-                        min = min->_left;
-                    }
-                    // ÕâÊ±£¬minÒ»¶¨ÊÇcurµÄÓÒ×ÓÊ÷ÀïÃæ×îĞ¡µÄ
-                    std::swap(cur->_key, min->_key);
-                    // ´ËÊ±minµÄ×óÒ»¶¨Îª¿Õ£¬ÇÒÒªÉ¾³ıµômin
-                    if(min == minParent->_right)
-                        minParent->_right = min->_right;
-                    else
-                        minParent->_left = min->_right;
-                    delete min;
                 }
                 return true;
-                // old
-//                if (cur->_left == nullptr && cur->_right == nullptr) {
-//                    // Ò¶×Ó½Úµã£¬Ö±½ÓÉ¾³ı
-//                    if (parent->_left->_key == key) {
-//                        delete parent->_left;
-//                        parent->_left = nullptr;
-//                    } else {
-//                        delete parent->_right;
-//                        parent->_right = nullptr;
-//                    }
-//                } else if (cur->_left != nullptr && cur->_right != nullptr) {
-//                    // ÕÒÓÒ×ÓÊ÷µÄ×îĞ¡Öµ£¬ºÍcur½»»»Öµ
-//                    Node *minParent = cur;
-//                    Node *min = cur->_right; // childÒ»¶¨²»Îªnullptr
-//                    while (min->_left) {
-//                        minParent = min;
-//                        min = min->_left;
-//                    }
-//                    std::swap(cur->_key, min->_key);
-//                    if (minParent == cur) {
-//                        minParent->_right = min->_right;  // ´ËÊ±child->_leftÒ»¶¨Îªnullptr
-//                        delete min;
-//                    } else {
-//                        // ´ËÊ±childºÍparent_2µÄ¹ØÏµÒ»¶¨ÊÇ×ó×ÓÊ÷ºÍ¸¸½Úµã
-//                        minParent->_left = min->_right;
-//                        delete min;
-//                    }
-//                } else {
-//                    Node *child = nullptr;
-//                    if (cur->_right != nullptr) {
-//                        child = cur->_right;
-//                    } else {
-//                        child = cur->_left;
-//                    }
-//                    if (parent->_left != nullptr && parent->_left->_key == key) {
-//                        delete parent->_left;
-//                        parent->_left = child;
-//                    } else {
-//                        delete parent->_right;
-//                        parent->_right = child;
-//                    }
-//                }
-//                return true;
+            }else if(key > cur->_key) {
+                parent = cur;
+                cur = cur->_right;
+            }else {
+                parent = cur;
+                cur = cur->_left;
             }
         }
-        return false;  // Ã»ÓĞÒªÉ¾³ıµÄkeyµÄ½áµã
+        // cur == nullptrï¼Œæ²¡æ‰¾åˆ°ï¼Œä¸å­˜åœ¨ï¼Œåˆ é™¤å¤±è´¥
+        return false;
     }
-    // ÖĞĞò±éÀú£¬´òÓ¡¶ş²æËÑË÷Ê÷£¨ÓĞĞò£©
+    // old
+//    bool Erase(const K& key) {
+//            Node *cur = _root;
+//            Node *parent = _root;
+//            while (cur) {
+//                if (key > cur->_key) {
+//                    parent = cur;
+//                    cur = cur->_right;
+//                } else if (key < cur->_key) {
+//                    parent = cur;
+//                    cur = cur->_left;
+//                } else {
+//                    if(cur == _root)
+//                    {
+//                        // æ­¤æ—¶ï¼Œè¦åˆ é™¤çš„æ˜¯æ•´æ£µæ ‘çš„æ ¹èŠ‚ç‚¹ï¼Œæ­¤æ—¶çš„parentä¸æ˜¯curçš„çˆ¶èŠ‚ç‚¹ã€‚
+//                        if(_root->_left == nullptr) {
+//                            Node *del = _root;
+//                            _root = _root->_right;
+//                            delete del;
+//                            return true;
+//                        }
+//                        else if(_root->_right == nullptr) {
+//                            Node *del = _root;
+//                            _root = _root->_left;
+//                            delete del;
+//                            return true;
+//                        }
+//                        else {
+//                            Node *min = _root->_right;
+//                            Node *minP = _root;
+//                            while(min->_left) {
+//                                minP = min;
+//                                min = min->_left;
+//                            }
+//                            std::swap(_root->_key, min->_key);
+//                            // æ­¤æ—¶éœ€è¦åˆ é™¤min;
+//                            //                        return Erase(key);  // æ­¤æ—¶keyå·²ç»ä¸æ˜¯æ ¹èŠ‚ç‚¹äº†ã€‚
+//                            if(min == minP->_left) {
+//                                minP->_left = min->_right;
+//                            }
+//                            else {
+//                                minP->_right = min->_right;
+//                            }
+//                            delete min;
+//                            return true;
+//                        }
+//                    }
+//                    // æ‰¾åˆ°è¦åˆ é™¤çš„ç»“ç‚¹çš„ï¼Œä¹Ÿå°±æ˜¯curï¼Œå…¶çˆ¶èŠ‚ç‚¹æ˜¯parentï¼ˆé™¤äº†è¦åˆ é™¤rootæ—¶ï¼Œæ­¤æ—¶cur == parentï¼‰
+//                    // edition 2
+//                    // situation 1 - æƒ…å†µ1
+//                    if(cur->_left == nullptr)
+//                    {
+//                        if(parent->_left == cur)
+//                        {
+//                            parent->_left = cur->_right;
+//                            delete cur;
+//                        }
+//                        else
+//                        {
+//                            parent->_right = cur->_right;
+//                            delete cur;
+//                        }
+//                    }
+//                    else if(cur->_right == nullptr)
+//                    {
+//                        if(parent->_left == cur)
+//                        {
+//                            parent->_left = cur->_left;
+//                            delete cur;
+//                        }
+//                        else
+//                        {
+//                            parent->_right = cur->_left;
+//                            delete cur;
+//                        }
+//                    }
+//                    else
+//                    {
+//                        // è¦åˆ é™¤ç»“ç‚¹çš„å·¦å³å‡ä¸ä¸ºç©º
+//                        // å»åˆ é™¤ç»“ç‚¹çš„å³å­æ ‘ä¸­æ‰¾æœ€å°å€¼ï¼Œæ›¿æ¢æ³•åˆ é™¤
+//                        Node* min = cur->_right;  // è¿™é‡Œä¸€å®šä¸ä¸ºnullptr
+//                        Node* minParent = cur;
+//                        while(min->_left)
+//                        {
+//                            minParent = min;
+//                            min = min->_left;
+//                        }
+//                        // è¿™æ—¶ï¼Œminä¸€å®šæ˜¯curçš„å³å­æ ‘é‡Œé¢æœ€å°çš„
+//                        std::swap(cur->_key, min->_key);
+//                        // æ­¤æ—¶minçš„å·¦ä¸€å®šä¸ºç©ºï¼Œä¸”è¦åˆ é™¤æ‰min
+//                        if(min == minParent->_right)
+//                            minParent->_right = min->_right;
+//                        else
+//                            minParent->_left = min->_right;
+//                        delete min;
+//                    }
+//                    return true;
+//                    // old
+//                    //                if (cur->_left == nullptr && cur->_right == nullptr) {
+//                    //                    // å¶å­èŠ‚ç‚¹ï¼Œç›´æ¥åˆ é™¤
+//                    //                    if (parent->_left->_key == key) {
+//                    //                        delete parent->_left;
+//                    //                        parent->_left = nullptr;
+//                    //                    } else {
+//                    //                        delete parent->_right;
+//                    //                        parent->_right = nullptr;
+//                    //                    }
+//                    //                } else if (cur->_left != nullptr && cur->_right != nullptr) {
+//                    //                    // æ‰¾å³å­æ ‘çš„æœ€å°å€¼ï¼Œå’Œcuräº¤æ¢å€¼
+//                    //                    Node *minParent = cur;
+//                    //                    Node *min = cur->_right; // childä¸€å®šä¸ä¸ºnullptr
+//                    //                    while (min->_left) {
+//                    //                        minParent = min;
+//                    //                        min = min->_left;
+//                    //                    }
+//                    //                    std::swap(cur->_key, min->_key);
+//                    //                    if (minParent == cur) {
+//                    //                        minParent->_right = min->_right;  // æ­¤æ—¶child->_leftä¸€å®šä¸ºnullptr
+//                    //                        delete min;
+//                    //                    } else {
+//                    //                        // æ­¤æ—¶childå’Œparent_2çš„å…³ç³»ä¸€å®šæ˜¯å·¦å­æ ‘å’Œçˆ¶èŠ‚ç‚¹
+//                    //                        minParent->_left = min->_right;
+//                    //                        delete min;
+//                    //                    }
+//                    //                } else {
+//                    //                    Node *child = nullptr;
+//                    //                    if (cur->_right != nullptr) {
+//                    //                        child = cur->_right;
+//                    //                    } else {
+//                    //                        child = cur->_left;
+//                    //                    }
+//                    //                    if (parent->_left != nullptr && parent->_left->_key == key) {
+//                    //                        delete parent->_left;
+//                    //                        parent->_left = child;
+//                    //                    } else {
+//                    //                        delete parent->_right;
+//                    //                        parent->_right = child;
+//                    //                    }
+//                    //                }
+//                    //                return true;
+//                }
+//            }
+//            return false;  // æ²¡æœ‰è¦åˆ é™¤çš„keyçš„ç»“ç‚¹
+//        }
+    // ä¸­åºéå†ï¼Œæ‰“å°äºŒå‰æœç´¢æ ‘ï¼ˆæœ‰åºï¼‰
     void InOrder()
     {
         _InOrder(_root);
@@ -262,19 +335,18 @@ public:
 private:
     void _InOrder(Node* root)
     {
-        // µäĞÍÖĞĞò±éÀú
+        // å…¸å‹ä¸­åºéå†
         if(root == nullptr)
             return;
         _InOrder(root->_left);
         std::cout<<root->_key<<" ";
         _InOrder(root->_right);
     }
-    ////////////////////////////////////////////////////////////////////////
-    // µİ¹é
 public:
+    // é€’å½’
     bool Find_R(const K& key)
     {
-        // ×î¶àÕÒh´Î£¬hÎªÊ÷µÄ¸ß¶È¡£
+        // æœ€å¤šæ‰¾hæ¬¡ï¼Œhä¸ºæ ‘çš„é«˜åº¦ã€‚
         return _Find_R(_root, key);
     }
     bool Insert_R(const K& key)
@@ -286,11 +358,28 @@ public:
         return _Erase_R(_root, key);
     }
 private:
+    bool _Find_R(Node *root, const K &key) {
+        if(root == nullptr) return false;
+        if(root->_key == key)   return true;
+        else if(key > root->_key)   return _Find_R(root->_right, key);
+        else    return _Find_R(root->_left, key);
+    }
+    bool _Insert_R(Node *&root, const K& key) {
+        // ç¬¬ä¸€ä¸ªå‚æ•°ä¸ºä¸€ä¸ªæŒ‡é’ˆçš„å¼•ç”¨
+        if(root == nullptr) {
+            root = new Node(key);   // æ‰¾è§å¯¹åº”ä½ç½®äº†ï¼Œæˆ–è€…_rootæœ¬èº«å°±æ˜¯nullptrï¼ˆç©ºæ ‘ï¼‰
+            return true;
+        }
+        else if(key == root->_key) return false;
+        // è¿™é‡Œæ˜¯æŠŠç»“æ„ä½“é‡Œçš„æŒ‡é’ˆæ•°æ®æˆå‘˜ä¼ è¿‡å»ï¼Œå‚æ•°ç”¨å¼•ç”¨æ¥æ”¶ï¼Œæ”¹å˜å‚æ•°å°±æ˜¯æ”¹å˜è¿™é‡Œç»“æ„ä½“çš„æŒ‡é’ˆæˆå‘˜ã€‚
+        else if(key > root->_key) return _Insert_R(root->_right, key);  // è¿™é‡ŒæŠŠæŒ‡é’ˆä¼ è¿‡å»ï¼Œæ˜¯å¼•ç”¨~
+        else return _Insert_R(root->_left, key);  // è¿™é‡ŒæŠŠæŒ‡é’ˆä¼ è¿‡å»ï¼Œæ˜¯å¼•ç”¨~
+    }
     bool _Erase_R(Node*& root, const K& key)
     {
         if(root == nullptr)
         {
-            // ²»´æÔÚ
+            // ä¸å­˜åœ¨
             return false;
         }
         if(key < root->_key)
@@ -303,7 +392,7 @@ private:
         }
         else
         {
-            // ÒªÉ¾³ıµÄ¾ÍÊÇÕâ¸öroot£¬Õâ¸örootÊµ¼ÊÉÏÊÇ¸¸½Úµã½á¹¹ÌåÀïµÄright or leftÖ¸ÕëµÄ±ğÃû£¡£¡£¡£¡£¡
+            // è¦åˆ é™¤çš„å°±æ˜¯è¿™ä¸ªrootï¼Œè¿™ä¸ªrootå®é™…ä¸Šæ˜¯çˆ¶èŠ‚ç‚¹ç»“æ„ä½“é‡Œçš„right or leftæŒ‡é’ˆçš„åˆ«åï¼ï¼ï¼ï¼ï¼
             if(root->_left == nullptr) {
                 Node* del = root;
                 root = root->_right;
@@ -324,9 +413,9 @@ private:
                     min = min->_left;
                 }
                 std::swap(root->_key, min->_key);
-                // ÉÏ·½½»»»Ê±£¬rootµÄkeyÒ»¶¨±ÈminµÄkeyĞ¡£¬ÒòÎªminÔÚrootµÄÓÒ×ÓÊ÷ÖĞ¡£
-                // ´ËÊ±½»»»Íê£¬ĞèÒªÉ¾³ıµÄ¾ÍÊÇminÁË£¬minÔÚrootµÄÓÒ×ÓÊ÷ÖĞ¡£
-                // ²¢ÇÒÏÂ·½µİ¹éµ÷ÓÃ×îºó²éÕÒµ½Ê±£¬Ò»¶¨»á×ß×óÎª¿ÕµÄÇé¿ö¡£ÒòÎªminµÄ×ó¾ÍÊÇ¿Õhhhhhhh
+                // ä¸Šæ–¹äº¤æ¢æ—¶ï¼Œrootçš„keyä¸€å®šæ¯”minçš„keyå°ï¼Œå› ä¸ºminåœ¨rootçš„å³å­æ ‘ä¸­ã€‚
+                // æ­¤æ—¶äº¤æ¢å®Œï¼Œéœ€è¦åˆ é™¤çš„å°±æ˜¯minäº†ï¼Œminåœ¨rootçš„å³å­æ ‘ä¸­ã€‚
+                // å¹¶ä¸”ä¸‹æ–¹é€’å½’è°ƒç”¨æœ€åæŸ¥æ‰¾åˆ°æ—¶ï¼Œä¸€å®šä¼šèµ°å·¦ä¸ºç©ºçš„æƒ…å†µã€‚å› ä¸ºminçš„å·¦å°±æ˜¯ç©ºhhhhhhh
                 return _Erase_R(root->_right, key);
 //                if(minParent->_left == min)
 //                {
@@ -341,75 +430,30 @@ private:
             return true;
         }
     }
-    bool _Insert_R(Node*& root, const K& key)
-    {
-        if(root == nullptr)
-        {
-            root = new Node(key);
-            return true;
-        }
-        if(key < root->_key)
-        {
-            // ÕâÀïÊÇ°Ñ½á¹¹ÌåÀïµÄÖ¸Õë³ÉÔ±´«¹ıÈ¥£¬²ÎÊıÓÃÒıÓÃ½ÓÊÕ£¬¸Ä±ä²ÎÊı¾ÍÊÇ¸Ä±äÕâÀï½á¹¹ÌåµÄÖ¸Õë³ÉÔ±¡£
-            return _Insert_R(root->_left, key);
-        }
-        else if(key > root->_key)
-        {
-            // ÕâÀïÊÇ°Ñ½á¹¹ÌåÀïµÄÖ¸Õë³ÉÔ±´«¹ıÈ¥£¬²ÎÊıÓÃÒıÓÃ½ÓÊÕ£¬¸Ä±ä²ÎÊı¾ÍÊÇ¸Ä±äÕâÀï½á¹¹ÌåµÄÖ¸Õë³ÉÔ±¡£
-            return _Insert_R(root->_right, key);
-        }
-        else
-        {
-            return false;
-        }
-    }
 //    bool _Insert_R(Node* root, const K& key)
 //    {
-//        if(root == nullptr)
-//        {
+//        if(root == nullptr) {
 //            _root = new Node(key);
 //            return true;
 //        }
-//        if(root->_key < key && root->_right == nullptr)
-//        {
+//        if(root->_key < key && root->_right == nullptr) {
 //            root->_right = new Node(key);
 //            return true;
 //        }
-//        else if(root->_key > key && root->_left == nullptr)
-//        {
+//        else if(root->_key > key && root->_left == nullptr) {
 //            root->_left = new Node(key);
 //            return true;
 //        }
-//        else if(root->_key > key)
-//        {
+//        else if(root->_key > key) {
 //            return _Insert_R(root->_left, key);
 //        }
-//        else if(root->_key < key)
-//        {
+//        else if(root->_key < key) {
 //            return _Insert_R(root->_right, key);
 //        }
-//        else
-//        {
+//        else {
 //            return false;
 //        }
 //    }
-    bool _Find_R(Node* root, const K& key)
-    {
-        if(root == nullptr)
-            return false;
-        if(root->_key > key)
-        {
-            return _Find_R(root->_left, key);
-        }
-        else if(root->_key < key)
-        {
-            return _Find_R(root->_right, key);
-        }
-        else
-        {
-            return true;
-        }
-    }
 };
 
 

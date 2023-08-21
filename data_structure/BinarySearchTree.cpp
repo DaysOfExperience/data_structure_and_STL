@@ -47,13 +47,13 @@ void test2()
     {
         t.Insert(i);
     }
-    BinarySearchTree<int> copy = t; // µ÷ÓÃ¿½±´¹¹Ôìº¯Êı
+    BinarySearchTree<int> copy = t; // è°ƒç”¨æ‹·è´æ„é€ å‡½æ•°
     t.InOrder();
     copy.InOrder();
 }
 void test3()
 {
-    // Ò»Ğ©ºÍ¶ş²æËÑË÷Ê÷¹ØÁªĞÔ²»´óµÄ²âÊÔ
+    // ä¸€äº›å’ŒäºŒå‰æœç´¢æ ‘å…³è”æ€§ä¸å¤§çš„æµ‹è¯•
     int a[] = {4,3,2,5,6,8,7,9,1,0};
     priority_queue<int, vector<int>, greater<int>> q(begin(a), end(a));
     while(!q.empty())
@@ -114,7 +114,7 @@ void test6()
     bst.Insert(5);
     bst.Insert(6);
     bst.InOrder();
-    bst.Erase(1);
+    bst.Erase_R(1);
     bst.InOrder();
 }
 int main()
