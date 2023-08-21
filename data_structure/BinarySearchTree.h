@@ -339,7 +339,7 @@ private:
         if(root == nullptr)
             return;
         _InOrder(root->_left);
-        std::cout<<root->_key<<" ";
+        std::cout << root->_key << " ";
         _InOrder(root->_right);
     }
 public:
@@ -375,61 +375,101 @@ private:
         else if(key > root->_key) return _Insert_R(root->_right, key);  // 这里把指针传过去，是引用~
         else return _Insert_R(root->_left, key);  // 这里把指针传过去，是引用~
     }
-    bool _Erase_R(Node*& root, const K& key)
-    {
-        if(root == nullptr)
-        {
-            // 不存在
-            return false;
-        }
-        if(key < root->_key)
-        {
-            return _Erase_R(root->_left, key);
-        }
-        else if(key > root->_key)
-        {
-            return _Erase_R(root->_right, key);
-        }
-        else
-        {
-            // 要删除的就是这个root，这个root实际上是父节点结构体里的right or left指针的别名！！！！！
+    // 23821
+    bool _Erase_R(Node *&root, const K& key) {
+        if(root == nullptr) return false;   // root为空结点或根节点~
+        if(key > root->_key)    return _Erase_R(root->_right, key);
+        else if(key < root->_key)   return _Erase_R(root->_left, key);
+        else {
+            // 要删除的就是这个root，这个root实际上是父节点结构体里的right or left指针数据成员的别名！！！！！
             if(root->_left == nullptr) {
-                Node* del = root;
+                Node *del = root;
                 root = root->_right;
                 delete del;
-            }
-            else if(root->_right == nullptr) {
+            }else if(root->_right == nullptr) {
                 Node *del = root;
                 root = root->_left;
                 delete del;
-            }
-            else
-            {
-                Node* minParent = root;
-                Node* min = root->_right;
-                while(min->_left)
-                {
+            }else {
+                // 要删除的结点左右子树都不为空
+                // 找到右子树的最小值，和cur的val进行swap，删除最小结点即可
+                Node *min = root->_right;
+                Node *minParent = root;
+                while(min->_left) {
                     minParent = min;
                     min = min->_left;
                 }
-                std::swap(root->_key, min->_key);
-                // 上方交换时，root的key一定比min的key小，因为min在root的右子树中。
-                // 此时交换完，需要删除的就是min了，min在root的右子树中。
-                // 并且下方递归调用最后查找到时，一定会走左为空的情况。因为min的左就是空hhhhhhh
-                return _Erase_R(root->_right, key);
-//                if(minParent->_left == min)
-//                {
-//                    minParent->_left = min->_right;
-//                }
-//                else
-//                {
-//                    minParent->_right = min->_right;
-//                }
-//                delete min;
+                // 此时min的左子树为空，右子树不确定。且minParent和min的关系不确定
+                std::swap(min->_key, root->_key);
+                if(min == minParent->_right) {
+//                    minParent->_right = nullptr;      // false!!!!!
+                    minParent->_right = min->_right;    // right!!!!!
+                    delete min;
+                }else {
+                    minParent->_left = min->_right; // min->_right 可能为空，可能不为空，无所谓
+                    delete min;
+                }
+                // 下方return很秀，因为交换之后，可以去root的右子树去删除key(key被交换到右子树中的某个结点上了)，最终会走左为空的情况。（替换上方的ifelse
+//                return _Erase_R(root->_right, key);
             }
             return true;
         }
     }
+//    bool _Erase_R(Node*& root, const K& key)
+//    {
+//        if(root == nullptr)
+//        {
+//            // 不存在
+//            return false;
+//        }
+//        if(key < root->_key)
+//        {
+//            return _Erase_R(root->_left, key);
+//        }
+//        else if(key > root->_key)
+//        {
+//            return _Erase_R(root->_right, key);
+//        }
+//        else
+//        {
+//            // 要删除的就是这个root，这个root实际上是父节点结构体里的right or left指针的别名！！！！！
+//            if(root->_left == nullptr) {
+//                Node* del = root;
+//                root = root->_right;
+//                delete del;
+//            }
+//            else if(root->_right == nullptr) {
+//                Node *del = root;
+//                root = root->_left;
+//                delete del;
+//            }
+//            else
+//            {
+//                Node* minParent = root;
+//                Node* min = root->_right;
+//                while(min->_left)
+//                {
+//                    minParent = min;
+//                    min = min->_left;
+//                }
+//                std::swap(root->_key, min->_key);
+//                // 上方交换时，root的key一定比min的key小，因为min在root的右子树中。
+//                // 此时交换完，需要删除的就是min了，min在root的右子树中。
+//                // 并且下方递归调用最后查找到时，一定会走左为空的情况。因为min的左就是空hhhhhhh
+//                return _Erase_R(root->_right, key);
+////                if(minParent->_left == min)
+////                {
+////                    minParent->_left = min->_right;
+////                }
+////                else
+////                {
+////                    minParent->_right = min->_right;
+////                }
+////                delete min;
+//            }
+//            return true;
+//        }
+//    }
 //    bool _Insert_R(Node* root, const K& key)
 //    {
 //        if(root == nullptr) {

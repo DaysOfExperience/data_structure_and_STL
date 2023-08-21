@@ -27,17 +27,12 @@ void test1()
     t.InOrder();
     t.Erase_R(4);
     t.InOrder();
-//    t.InOrder();
-//    t.Erase(8);
-//    t.InOrder();
-//    for(auto&i:a) {
-//        t.Erase(i);
-//        t.InOrder();
-//    }
-//    t.Erase(10);
-//    t.InOrder();
-//    t.Erase(3);
-//    t.InOrder();
+    t.Erase(8);
+    t.InOrder();
+    t.Erase(10);
+    t.InOrder();
+    t.Erase(3);
+    t.InOrder();
 }
 void test2()
 {
@@ -71,28 +66,6 @@ void test3()
 
 }
 
-void test4()
-{
-    int arr[] = {4,3,6,8,7,9,1,2,0,3};
-    priority_queue<int> pq(begin(arr), end(arr));
-    while(!pq.empty())
-    {
-        cout<<pq.top()<<" ";
-        pq.pop();
-    }
-    cout<<endl;
-    map<int, int> m;
-    m[1];
-    m[4];
-    m[3];
-    m[9];
-    m[8];
-    for(auto&i:m)
-    {
-        cout<<i.first<<" "<<i.second<<endl;
-    }
-}
-
 void test5()
 {
     BinarySearchTree<int> bst;
@@ -119,6 +92,6 @@ void test6()
 }
 int main()
 {
-    test6();
+    test3();
     return 0;
 }
