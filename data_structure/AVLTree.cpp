@@ -11,16 +11,15 @@ void TestAVLTree1() {
         t.Insert(make_pair(i,i));
     t.InOrder();
     if(t.IsBalance() == true) {
-        cout<<"Æ½ºâ"<<endl;
+        cout<<"å¹³è¡¡"<<endl;
     }
     else {
-        cout<<"²»Æ½ºâ"<<endl;
+        cout<<"å¦å¹³è¡¡"<<endl;
     }
 }
-
 void TestAVLTree2() {
     int sz = 10000;
-    srand(time(0));
+    srand(time(nullptr));
     AVLTree<int, int> t;
     for(int i = 0; i < sz; ++i) {
         int num = rand();
@@ -29,7 +28,6 @@ void TestAVLTree2() {
     t.InOrder();
     cout<<t.IsBalance()<<endl;
 }
-
 int main()
 {
     TestAVLTree2();

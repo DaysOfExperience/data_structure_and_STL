@@ -20,30 +20,28 @@ struct AVLTreeNode
     AVLTreeNode<K, V>* _left;
     AVLTreeNode<K, V>* _right;
     AVLTreeNode<K, V>* _parent;
-    pair<K, V> _kv;  // ¼üÖµ¶Ô£¬AVLÊ÷µÄÃ¿¸ö½ÚµãµÄÔªËØÀàĞÍ
-    int _bf; // balance factor Æ½ºâÒò×Ó
+    pair<K, V> _kv;  // é”®å€¼å¯¹ï¼ŒAVLæ ‘çš„æ¯ä¸ªèŠ‚ç‚¹çš„å…ƒç´ ç±»å‹
+    int _bf; // balance factor å¹³è¡¡å› å­
 };
 
 template< typename K, typename V>
 class AVLTree
 {
 private:
-    AVLTreeNode<K, V>* _root = nullptr;
+    AVLTreeNode<K, V> *_root = nullptr;
 public:
     typedef AVLTreeNode<K, V> Node;
 
     bool Insert(const pair<K, V>& kv)
     {
-        // Èç¹û´ËÊ±ÊÇÒ»¸ö¿ÕÊ÷£¬Ö±½Ó½¨Á¢ĞÂ½áµã£¬¸Ä_root¼´¿É¡£´ËÊ±×óÓÒ×Ó½ÚµãºÍ¸¸½Úµã¾ùÎªnullptr£¬Æ½ºâÒò×ÓÎª0.
-        if(_root == nullptr)
-        {
+        // å¦‚æœæ­¤æ—¶æ˜¯ä¸€ä¸ªç©ºæ ‘ï¼Œç›´æ¥å»ºç«‹æ–°ç»“ç‚¹ï¼Œæ”¹_rootå³å¯ã€‚æ­¤æ—¶å·¦å³å­èŠ‚ç‚¹å’Œçˆ¶èŠ‚ç‚¹å‡ä¸ºnullptrï¼Œå¹³è¡¡å› å­ä¸º0.
+        if(_root == nullptr) {
             _root = new Node(kv);
             return true;
         }
-        Node* parent = nullptr;
         Node* cur = _root;
-        while(cur != nullptr)
-        {
+        Node* parent = nullptr;
+        while(cur != nullptr) {
             if(kv.first > cur->_kv.first) {
                 parent = cur;
                 cur = cur->_right;
@@ -53,11 +51,11 @@ public:
                 cur = cur->_left;
             }
             else {
-                // ÕÒµ½ÁËÏàµÈµÄ£¬´Ë´¦µÄÆ½ºâ¶ş²æËÑË÷Ê÷²»Ö§³Ö¶à¼üÖµÏàµÈ
+                // æ‰¾åˆ°äº†ç›¸ç­‰çš„ï¼ˆæ­¤å¤„çš„å¹³è¡¡äºŒå‰æœç´¢æ ‘ä¸æ”¯æŒå¤šé”®å€¼ç›¸ç­‰ï¼‰
                 return false;
             }
         }
-        // ´ËÊ±ÕÒµ½ÁËºÏÊÊµÄÎ»ÖÃ£¬cur==nullptr,parentÎªÒª²åÈëÎ»ÖÃµÄ¸¸½Úµã
+        // æ­¤æ—¶æ‰¾åˆ°äº†åˆé€‚çš„ä½ç½®ï¼Œcur==nullptr,parentä¸ºè¦æ’å…¥ä½ç½®çš„çˆ¶èŠ‚ç‚¹
         cur = new Node(kv);
         if(kv.first > parent->_kv.first) {
             parent->_right = cur;
@@ -66,51 +64,47 @@ public:
             parent->_left = cur;
         }
         cur->_parent = parent;
-        // ÏÖÔÚÕû¸öÊ÷µÄ¸¸×Ó½áµã¹ØÏµ¶¼ÅªºÃÁË£¬ĞÂ²åÈë½áµãµÄ×óÓÒ×Ó½ÚµãÎªnullptr£¬
+        // ç°åœ¨æ•´ä¸ªæ ‘çš„çˆ¶å­ç»“ç‚¹å…³ç³»éƒ½å¼„å¥½äº†ï¼Œæ–°æ’å…¥ç»“ç‚¹çš„å·¦å³å­èŠ‚ç‚¹ä¸ºnullptrï¼Œ
 
-        // ¸üĞÂÆ½ºâÒò×Ó£¨parent->_bf£©
+        // æ›´æ–°å¹³è¡¡å› å­ï¼ˆparent->_bfï¼‰
         while(parent != nullptr)
         {
-            if(cur == parent->_right) {
-                parent->_bf++;
-            }
-            else {
-                parent->_bf--;
-            }
+            if(cur == parent->_right)   parent->_bf++;
+            else    parent->_bf--;
             if(parent->_bf == 0) {
-                // ±íÊ¾Ö®Ç°_bf == -1 or _bf == 1£¬´ËÊ±parentÕâ¸öÊ÷¸ß¶È²»±ä£¬²»»áÓ°ÏìÆäËû×æ×Ú½áµã¡£
+                // è¡¨ç¤ºä¹‹å‰_bf == -1 or _bf == 1ï¼Œæ­¤æ—¶ä»¥parentä¸ºæ ¹èŠ‚ç‚¹çš„è¿™ä¸ªæ ‘çš„é«˜åº¦ä¸å˜ï¼Œä¸ä¼šå½±å“å…¶ä»–ç¥–å®—ç»“ç‚¹ã€‚
                 break;
             }
             else if(abs(parent->_bf) == 1) {
-                // Ö®Ç°_bf == 0£¬´ËÊ±parentÕâ¿ÃÊ÷¸ß¶È¸Ä±ä£¬ĞèÒª¼ÌĞøÏòÉÏĞŞ¸Ä
+                // ä¹‹å‰_bf == 0ï¼Œæ­¤æ—¶parentè¿™æ£µæ ‘é«˜åº¦æ”¹å˜ï¼Œéœ€è¦ç»§ç»­å‘ä¸Šä¿®æ”¹ï¼Œå› ä¸ºparentè¿™é¢—å­æ ‘é«˜åº¦æ”¹å˜äº†ï¼Œæ­¤æ—¶æ˜¯æœ‰å¯èƒ½è¿›ä¸€æ­¥å½±å“ä¸Šæ–¹å­æ ‘çš„
                 cur = parent;
-                parent = parent->_parent;
+                parent = parent->_parent;   // ä¸‰å‰é“¾çš„ä½œç”¨
             }
             else if(abs(parent->_bf) == 2) {
-                // ĞèÒªĞı×ª
+                // æ­¤æ—¶ï¼Œä»¥parentä¸ºæ ¹èŠ‚ç‚¹çš„å­æ ‘ç ´åäº†AVLæ ‘çš„æ€§è´¨ï¼Œéœ€è¦æ—‹è½¬è°ƒæ•´ã€‚
                 if(parent->_bf == 2 && parent->_right->_bf == 1) {
-//                if(parent->_bf == 2 && cur->_bf == 1) {
-                    // ½Ï¸ßÓÒ×ÓÊ÷µÄÓÒ±ß¸ß£¬×óµ¥Ğı
+//                if(parent->_bf == 2 && cur->_bf == 1) {    // ä¸èƒ½è¿™æ ·ï¼Œå› ä¸ºcurå’Œparentçš„å…³ç³»ä¸å®š
+                    // è¾ƒé«˜å³å­æ ‘çš„å³è¾¹é«˜ï¼Œå·¦å•æ—‹
                     RotateL(parent);
                 }
                 else if(parent->_bf == -2 && parent->_left->_bf == -1) {
-                    // ½Ï¸ß×ó×ÓÊ÷µÄ×ó±ß¸ß£¬ÓÒµ¥Ğı
+                    // è¾ƒé«˜å·¦å­æ ‘çš„å·¦è¾¹é«˜ï¼Œå³å•æ—‹
                     RotateR(parent);
                 }
                 else if(parent->_bf == -2 && parent->_left->_bf == 1) {
 //                else if(parent->_bf == -2 && cur->_bf == 1) {
-                    // ½Ï¸ß×ó×ÓÊ÷µÄÓÒ±ß²åÈë£¬×óÓÒË«Ğı
+                    // è¾ƒé«˜å·¦å­æ ‘çš„å³è¾¹æ’å…¥ï¼Œä½¿å¾—ä¸å¹³è¡¡ï¼Œåˆ™å·¦å³åŒæ—‹
                     RotateLR(parent);
                 }
                 else if(parent->_bf == 2 && parent->_right->_bf == -1) {
 //                else if(parent->_bf == 2 && cur->_bf == -1) {
-                    // ½Ï¸ßÓÒ×ÓÊ÷µÄ×ó±ß²åÈë£¬ÓÒ×óË«Ğı
+                    // è¾ƒé«˜å³å­æ ‘çš„å·¦è¾¹æ’å…¥ï¼Œä½¿å¾—ä¸å¹³è¡¡ï¼Œåˆ™å³å·¦åŒæ—‹
                     RotateRL(parent);
                 }
-                break;  // Ò»´Î²åÈë×î¶àÒ»´ÎĞı×ª¡£Ö»ÒªĞı×ªÒ»´Î£¬¾ÍÆ½ºâÁË£¬²»ĞèÒªÔÙÏòÉÏ¹Û²ì
+                break;  // ä¸€æ¬¡æ’å…¥æœ€å¤šä¸€æ¬¡æ—‹è½¬ã€‚åªè¦æ—‹è½¬ä¸€æ¬¡ï¼Œå°±å¹³è¡¡äº†ï¼Œä¸éœ€è¦å†å‘ä¸Šè§‚å¯Ÿ
             }
             else {
-                // ÀíÂÛÉÏ²»¿ÉÄÜ³öÏÖ
+                // ç†è®ºä¸Šä¸å¯èƒ½å‡ºç°
                 assert(false);
             }
         }
@@ -128,14 +122,14 @@ private:
     void RotateL(Node* parent)
     {
         Node* subR = parent->_right;
-        Node* subRL = subR->_left;  // ¿ÉÄÜÎª¿Õ
+        Node* subRL = subR->_left;  // å¯èƒ½ä¸ºç©º
 
         parent->_right = subRL;
         if(subRL)
             subRL->_parent = parent;
 
         subR->_left = parent;
-        Node* ppNode = parent->_parent;  // ĞŞ¸Äparent->parentÖ®Ç°£¬±£´æÔ­ÏÈparent->parent
+        Node* ppNode = parent->_parent;  // ä¿®æ”¹parent->parentä¹‹å‰ï¼Œä¿å­˜åŸå…ˆparent->parent
         parent->_parent = subR;
 
         if(parent == _root)
@@ -154,13 +148,12 @@ private:
                 subR->_parent = ppNode;
             }
         }
-        // ÕâÀïÊÇÒ»¶¨µÄ£¡£¡£¡×óµ¥ĞıºóµÄÆ½ºâÒò×Ó½á¹û
+        // è¿™é‡Œæ˜¯ä¸€å®šçš„ï¼ï¼ï¼å·¦å•æ—‹åçš„å¹³è¡¡å› å­ç»“æœ
         subR->_bf = parent->_bf = 0;
     }
-
     void RotateR(Node* parent)
     {
-        // ´ËÊ±parent²»Æ½ºâ
+        // æ­¤æ—¶parentä¸å¹³è¡¡
         Node* subL = parent->_left;
         Node* subLR = subL->_right;
 
@@ -173,12 +166,12 @@ private:
         subL->_right = parent;
 
         if(parent == _root) {
-            // parentÊÇÕû¿ÃÊ÷µÄ¸ù½Úµã
+            // parentæ˜¯æ•´æ£µæ ‘çš„æ ¹èŠ‚ç‚¹
             _root = subL;
             subL->_parent = nullptr;
         }
         else {
-            // parent²»ÊÇÕû¿ÃÊ÷µÄ¸ù½Úµã£¬parentÓĞparent
+            // parentä¸æ˜¯æ•´æ£µæ ‘çš„æ ¹èŠ‚ç‚¹ï¼Œparentæœ‰parent
             if(parent == ppNode->_right) {
                 ppNode->_right = subL;
                 subL->_parent = ppNode;
@@ -192,7 +185,7 @@ private:
     }
     void RotateLR(Node* parent) {
         Node* subL = parent->_left;
-        Node* subLR = subL->_right;   // ÕâÁ½¸öÒ»¶¨²»ÊÇ¿Õ
+        Node* subLR = subL->_right;   // è¿™ä¸¤ä¸ªä¸€å®šä¸æ˜¯ç©º
 
         int bf = subLR->_bf;
 
@@ -238,7 +231,7 @@ private:
             subRL->_bf = 0;
         }
         else if(bf == 0) {
-            // H = 0µÄÇé¿ö£¬×î¼òµ¥µÄÇé¿ö
+            // H = 0çš„æƒ…å†µï¼Œæœ€ç®€å•çš„æƒ…å†µ
             parent->_bf = 0;
             subR->_bf = 0;
             subRL->_bf = 0;
@@ -257,13 +250,13 @@ private:
         _InOrder(root->_right);
     }
     int Height(Node* root) {
-        // »ñÈ¡rootÕâ¿ÅÊ÷µÄ¸ß¶È
+        // è·å–rootè¿™é¢—æ ‘çš„é«˜åº¦
         if(root == nullptr)
             return 0;
         return 1 + max(Height(root->_left), Height(root->_right));
     }
     bool _IsBalance(Node* root) {
-        // ²âÊÔÕâ¿Å¶ş²æÊ÷ÊÇ·ñ·ûºÏAVLÊ÷
+        // æµ‹è¯•è¿™é¢—äºŒå‰æ ‘æ˜¯å¦ç¬¦åˆAVLæ ‘
         if(root == nullptr) {
             return true;
         }
