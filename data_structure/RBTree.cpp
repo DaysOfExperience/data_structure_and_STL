@@ -68,7 +68,7 @@ void TestRBTree1()
         t1.Insert(make_pair(e, e));
     }
     t1.InOrder();
-    cout << "IsBalance:" << t1.IsBalance() << endl;
+    cout << "IsBalance:" << t1.IsValidRBTree() << endl;
 }
 void TestRBTree2() {
     int sz = 10000;
@@ -79,11 +79,11 @@ void TestRBTree2() {
         t.Insert(make_pair(num,i));
     }
     t.InOrder();
-    cout<<t.IsBalance()<<endl;
+    cout<<t.IsValidRBTree()<<endl;
 }
 int main()
 {
-    TestRBTree2();
+    TestRBTree1();
 //    test2();
     return 0;
 }

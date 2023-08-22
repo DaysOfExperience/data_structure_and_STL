@@ -82,10 +82,13 @@ public:
                 // 叔叔存在且为红
                 parent->_col = BLACK;
                 uncle->_col = BLACK;
-
                 grandfather->_col = RED;
+
                 cur = grandfather;
                 parent = cur->_parent;
+                if(cur == _root) {  // 针对叔叔存在且为红时，变色之后，循环处理前，若此时的cur是根节点，则需要变一下色（parent为nullptr）
+                    cur->_col = BLACK;
+                }
             }
             else {
                 // 叔叔不存在或者叔叔存在且为黑
@@ -132,9 +135,6 @@ public:
                 }
                 break;
             }
-            if(cur == _root) {  // 针对叔叔存在且为红时，变色之后，循环处理前，若此时的cur是根节点，则需要变一下色（parent为nullptr）
-                cur->_col = BLACK;
-            }
         }
         return true;
     }
@@ -147,7 +147,7 @@ public:
 
     // 看颜色还是看高度？
     // 看颜色，因为高度正确不一定是红黑树
-    bool IsBalance()
+    bool IsValidRBTree()
     {
         if(_root == nullptr)
             return true;
@@ -155,25 +155,28 @@ public:
             cout << "根节点为红色，错误" << endl;
             return false;
         }
-        return PrevCheck(_root, 0, 0);
+        int baseNum = 0;
+        Node *cur = _root;
+        while(cur) {
+            if(cur->_col == BLACK) {
+                ++baseNum;
+            }
+            cur = cur->_left;
+        }
+        return PrevCheck(_root, baseNum, 0);
     }
 
 private:
-    bool PrevCheck(Node* root, int baseNum, int blackNum)
+    bool PrevCheck(Node* root, const int baseNum, int blackNum)
     {
         // 该结点为叶子结点的子结点，即空结点。
         if(root == nullptr)
         {
-            if(baseNum == 0) {
-                baseNum = blackNum;
-                return true;
-            }
-            else if(blackNum != baseNum){
-                cout << "某条路径黑色结点数量不同，错误" << endl;
+            if(blackNum != baseNum) {
+                std::cout << "存在路径的黑色结点个数不同，错误" << std::endl;
                 return false;
             }
-            else
-                return true;
+            return true;
         }
         // 该节点不是空结点，是红黑树中的某一个结点
         if(root->_col == BLACK)
