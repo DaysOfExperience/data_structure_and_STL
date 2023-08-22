@@ -13,7 +13,7 @@
 #include <set>
 using namespace std;
 
-#include "HashTable - ¸±±¾.h"
+#include "HashTable_source.h"
 
 void Test1() {
     size_t num = 10000000;
@@ -29,14 +29,14 @@ void Test1() {
     unordered_map<int,int> stdht;
     map<int,int> m;
 
-    cout<<"²åÈë£º£º£º£º£º£º"<<endl;
+    cout<<"æ’å…¥ï¼šï¼šï¼šï¼šï¼šï¼š"<<endl;
     size_t begin = clock();
 //    for(auto&i:v)
 //    {
 //        cht.Insert(make_pair(i,i));
 //    }
     size_t end = clock();
-    cout<<"±ÕÉ¢ÁÐ:"<<end-begin<<endl;
+    cout<<"é—­æ•£åˆ—:"<<end-begin<<endl;
 
     begin = clock();
     for(auto&i:v)
@@ -44,37 +44,37 @@ void Test1() {
         oht.Insert(make_pair(i,i));
     }
     end = clock();
-    cout<<"¿ªÉ¢ÁÐ:"<<end-begin<<endl;
+    cout<<"å¼€æ•£åˆ—:"<<end-begin<<endl;
     begin = clock();
     for(auto&i:v)
     {
         stdht.insert(make_pair(i,i));
     }
     end = clock();
-    cout<<"±ê×¼¿â¹þÏ£:"<<end-begin<<endl;
+    cout<<"æ ‡å‡†åº“å“ˆå¸Œ:"<<end-begin<<endl;
     begin = clock();
     for(auto&i:v)
     {
         m.insert(make_pair(i,i));
     }
     end = clock();
-    cout<<"±ê×¼¿âºìºÚÊ÷:"<<end-begin<<endl;
+    cout<<"æ ‡å‡†åº“çº¢é»‘æ ‘:"<<end-begin<<endl;
 
-    cout<<"²éÕÒ£º£º£º£º£º£º"<<endl;
+    cout<<"æŸ¥æ‰¾ï¼šï¼šï¼šï¼šï¼šï¼š"<<endl;
     begin = clock();
     for(auto&i:v)
     {
         m.find(i);
     }
     end = clock();
-    cout<<"±ê×¼¿âºìºÚÊ÷:"<<end-begin<<endl;
+    cout<<"æ ‡å‡†åº“çº¢é»‘æ ‘:"<<end-begin<<endl;
     begin = clock();
     for(auto&i:v)
     {
         cht.Find(i);
     }
     end = clock();
-    cout<<"±ÕÉ¢ÁÐ:"<<end-begin<<endl;
+    cout<<"é—­æ•£åˆ—:"<<end-begin<<endl;
 
     begin = clock();
     for(auto&i:v)
@@ -82,14 +82,14 @@ void Test1() {
         oht.Find(i);
     }
     end = clock();
-    cout<<"¿ªÉ¢ÁÐ:"<<end-begin<<endl;
+    cout<<"å¼€æ•£åˆ—:"<<end-begin<<endl;
     begin = clock();
     for(auto&i:v)
     {
         stdht.find(i);
     }
     end = clock();
-    cout<<"±ê×¼¿â¹þÏ£:"<<end-begin<<endl;
+    cout<<"æ ‡å‡†åº“å“ˆå¸Œ:"<<end-begin<<endl;
 
 }
 
@@ -107,12 +107,12 @@ void Test2() {
     {
         ht.Insert(make_pair(i,i));
     }
-    cout << "¹þÏ£±íÖÐÊý¾Ý¸öÊý:" << ht.Size() << endl;
-    cout << "¹þÏ£±íµÄ³¤¶È:" << ht.TableSize() << endl;
-    cout << "Í°µÄ¸öÊý:" << ht.BucketNum() << endl;
-    cout << "Æ½¾ùÃ¿¸öÍ°µÄ³¤¶È:" << (double)ht.Size() / (double)ht.BucketNum() << endl;
-    cout << "×î³¤µÄÍ°µÄ³¤¶È:" << ht.MaxBucketLength() << endl;
-    cout << "¸ºÔØÒò×Ó:" << (double)ht.Size() / (double)ht.TableSize() << endl;
+    cout << "å“ˆå¸Œè¡¨ä¸­æ•°æ®ä¸ªæ•°:" << ht.Size() << endl;
+    cout << "å“ˆå¸Œè¡¨çš„é•¿åº¦:" << ht.TableSize() << endl;
+    cout << "æ¡¶çš„ä¸ªæ•°:" << ht.BucketNum() << endl;
+    cout << "å¹³å‡æ¯ä¸ªæ¡¶çš„é•¿åº¦:" << (double)ht.Size() / (double)ht.BucketNum() << endl;
+    cout << "æœ€é•¿çš„æ¡¶çš„é•¿åº¦:" << ht.MaxBucketLength() << endl;
+    cout << "è´Ÿè½½å› å­:" << (double)ht.Size() / (double)ht.TableSize() << endl;
 }
 
 void TestHT3()
@@ -124,10 +124,10 @@ void TestHT3()
     for (int i = 0; i < n; ++i)
     {
         //v.push_back(i);
-        v.insert(rand() + i);  // ÖØ¸´ÉÙ
-        //v.push_back(rand());  // ÖØ¸´¶à
+        v.insert(rand() + i);  // é‡å¤å°‘
+        //v.push_back(rand());  // é‡å¤å¤š
     }
-    cout<<"µ±Ç°²»ÖØ¸´µÄÓÐÐ§Êý¾Ý¸öÊýÎª:"<<v.size()<<endl;
+    cout<<"å½“å‰ä¸é‡å¤çš„æœ‰æ•ˆæ•°æ®ä¸ªæ•°ä¸º:"<<v.size()<<endl;
     size_t begin1 = clock();
     OpenHashing::HashTable<int, int> ht;
     for (auto e : v)
@@ -136,12 +136,12 @@ void TestHT3()
     }
     size_t end1 = clock();
 
-    cout << "¹þÏ£±íÖÐÊý¾Ý¸öÊý£¨ÒÑÈ¥ÖØ£©:" << ht.Size() << endl;
-    cout << "±íµÄ³¤¶È:" << ht.TableSize() << endl;
-    cout << "Í°µÄ¸öÊý:" << ht.BucketNum() << endl;
-    cout << "Æ½¾ùÃ¿¸öÍ°µÄ³¤¶È:" << (double)ht.Size() / (double)ht.BucketNum() << endl;
-    cout << "×î³¤µÄÍ°µÄ³¤¶È:" << ht.MaxBucketLength() << endl;
-    cout << "¸ºÔØÒò×Ó:" << (double)ht.Size() / (double)ht.TableSize() << endl;
+    cout << "å“ˆå¸Œè¡¨ä¸­æ•°æ®ä¸ªæ•°ï¼ˆå·²åŽ»é‡ï¼‰:" << ht.Size() << endl;
+    cout << "è¡¨çš„é•¿åº¦:" << ht.TableSize() << endl;
+    cout << "æ¡¶çš„ä¸ªæ•°:" << ht.BucketNum() << endl;
+    cout << "å¹³å‡æ¯ä¸ªæ¡¶çš„é•¿åº¦:" << (double)ht.Size() / (double)ht.BucketNum() << endl;
+    cout << "æœ€é•¿çš„æ¡¶çš„é•¿åº¦:" << ht.MaxBucketLength() << endl;
+    cout << "è´Ÿè½½å› å­:" << (double)ht.Size() / (double)ht.TableSize() << endl;
 }
 
 void test_op()
@@ -228,7 +228,8 @@ int main()
 //    ClosedHashing::TestClosedHash();
 //    ClosedHashing::TestHT1();
 //    Test1();
+//    Test2();
 //    TestHT3();
-    test_op();
+//    test_op();
     return 0;
 }
